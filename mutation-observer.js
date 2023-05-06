@@ -66,4 +66,4 @@ const observer = new MutationObserver((mutations, observer) => {
 
 observer.observe(document.body, {subtree: true, childList: true});
 
-console.debug("Tom's Outlook Web Access loaded.");
+console.debug("Tom's Outlook Web Access: mutation-observer.js loaded");
