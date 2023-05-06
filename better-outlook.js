@@ -1,14 +1,6 @@
 "use strict";
 
-/* The passed in array of mutations from the observer may be quite large.
- * Avoid iterating over and searching thru it by using a live HTMLCollection
- * (spans) instead as a way to find indicator elements.
- *
- * Suggested approach from <https://stackoverflow.com/a/39332340>.
- */
-const spans = document.body.getElementsByTagName("span");
-
-const removeCautionBanners = () => {
+const removeCautionBanners = (nodes) => {
   /*
 
   The content injected into the text/html (quoted-printable) part is:
@@ -30,7 +22,8 @@ const removeCautionBanners = () => {
     <p></p>
 
   */
-  const cautionSpans = Array.from(spans)
+  const cautionSpans = Array.from(nodes)
+    .flatMap(node => Array.from(node.getElementsByTagName("span")))
     .filter(span => span.attributes.style?.value === "color:#9C6500;"
                  && span.textContent === "CAUTION:");
 
@@ -62,7 +55,13 @@ const removeCautionBanners = () => {
 
 const observer = new MutationObserver((mutations, observer) => {
   // XXX TODO: Maybe do this all within requestIdleCallback? or maybe not.
-  removeCautionBanners();
+  for (const mutation of mutations) {
+    switch (mutation.type) {
+      case "childList":
+        removeCautionBanners(mutation.addedNodes);
+        break;
+    }
+  }
 });
 
 observer.observe(document.body, {subtree: true, childList: true});
