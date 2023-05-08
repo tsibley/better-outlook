@@ -35,7 +35,7 @@ function removeCautionBanners(nodes) {
 
   This renders in Outlook as:
 
-    <div><span style="color:#9C6500;">CAUTION:</span> This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.</div>
+    <div><span style="color:#9C6500">CAUTION:</span> This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.</div>
     <br aria-hidden="true">
     <p></p>
 
