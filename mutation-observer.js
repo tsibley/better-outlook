@@ -42,7 +42,7 @@ function removeCautionBanners(nodes) {
   */
   const cautionSpans = Array.from(nodes)
     .flatMap(node => Array.from(node.getElementsByTagName("span")))
-    .filter(span => span.attributes.style?.value === "color:#9C6500;"
+    .filter(span => span.attributes.style?.value.startsWith("color:#9C6500")
                  && span.textContent === "CAUTION:");
 
   console.debug("Caution spans", cautionSpans);
