@@ -1,6 +1,24 @@
 "use strict";
 
-const removeCautionBanners = (nodes) => {
+function load() {
+    const observer = new MutationObserver((mutations, observer) => {
+      // XXX TODO: Maybe do this all within requestIdleCallback? or maybe not.
+      for (const mutation of mutations) {
+        switch (mutation.type) {
+          case "childList":
+            removeCautionBanners(mutation.addedNodes);
+            break;
+        }
+      }
+    });
+
+    observer.observe(document.body, {subtree: true, childList: true});
+
+    console.debug("Tom's Outlook Web Access: mutation-observer.js loaded");
+}
+
+
+function removeCautionBanners(nodes) {
   /*
 
   The content injected into the text/html (quoted-printable) part is:
@@ -50,20 +68,7 @@ const removeCautionBanners = (nodes) => {
       parentDiv.remove();
     }
   });
-};
+}
 
 
-const observer = new MutationObserver((mutations, observer) => {
-  // XXX TODO: Maybe do this all within requestIdleCallback? or maybe not.
-  for (const mutation of mutations) {
-    switch (mutation.type) {
-      case "childList":
-        removeCautionBanners(mutation.addedNodes);
-        break;
-    }
-  }
-});
-
-observer.observe(document.body, {subtree: true, childList: true});
-
-console.debug("Tom's Outlook Web Access: mutation-observer.js loaded");
+load();
