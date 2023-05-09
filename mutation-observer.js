@@ -39,13 +39,35 @@ function removeCautionBanners(nodes) {
     <br aria-hidden="true">
     <p></p>
 
+  The content injected into the text/plain (quoted-printable) part is:
+
+    CAUTION: This email originated from outside of the organization. Do not cli=
+    ck links or open attachments unless you recognize the sender and know the c=
+    ontent is safe.
+
+  which renders in Outlook as:
+
+    <div class="PlainText">
+      CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.
+      <br aria-hidden="true">
+      <br aria-hidden="true">
+      <br aria-hidden="true">
+
   */
+  const cautionText = "CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.";
+
   const cautionSpans = Array.from(nodes)
     .flatMap(node => Array.from(node.getElementsByTagName("span")))
     .filter(span => span.attributes.style?.value.startsWith("color:#9C6500")
                  && span.textContent === "CAUTION:");
 
+  const cautionTextNodes = Array.from(nodes)
+    .flatMap(node => Array.from(node.getElementsByClassName("PlainText")))
+    .map(div => div.childNodes[0])
+    .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim() === cautionText);
+
   console.debug("Caution spans", cautionSpans);
+  console.debug("Caution text nodes", cautionTextNodes);
 
   requestAnimationFrame(() => {
     for (const cautionSpan of cautionSpans) {
@@ -66,6 +88,13 @@ function removeCautionBanners(nodes) {
         emptyP.remove();
 
       parentDiv.remove();
+    }
+
+    for (const cautionTextNode of cautionTextNodes) {
+      while (cautionTextNode.nextElementSibling?.tagName === "BR") {
+        cautionTextNode.nextElementSibling.remove();
+      }
+      cautionTextNode.remove();
     }
   });
 }
