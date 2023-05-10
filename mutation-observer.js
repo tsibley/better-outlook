@@ -54,6 +54,19 @@ function removeCautionBanners(nodes) {
       <br aria-hidden="true">
       <br aria-hidden="true">
 
+  The preview content for a collapsed message looks like:
+
+    <div class="GjFKx isFirstCard WWy1F" style="margin-right: 20px; margin-left: 8px; padding: 0px 12px 12px; width: calc(100% - 53.5px);" tabindex="-1">
+      …
+      <div class="G8bTU Ts94W allowTextSelection">
+        <div class="c7KoH"></div>
+        <span class="Q84Kk ookyc T0iU0">
+          <div><span class="OZZZK">Victor Lin</span></div>
+        </span>
+        <div class="G8bTU fnz7h">
+          <div class="NNlvm">Wed 10-May-23 15:25</div>
+          <div class="_nzWz">CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe. @victorlin commented on this pull request. In src/reference/faq.rst: +Why do I get an error</div>
+
   */
   const cautionText = "CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.";
 
@@ -67,11 +80,19 @@ function removeCautionBanners(nodes) {
     .map(div => div.childNodes[0])
     .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim() === cautionText);
 
-  if (!cautionSpans.length && !cautionTextNodes.length)
+  const cautionPreviewNodes = Array.from(nodes)
+    .flatMap(node => Array.from(node.getElementsByClassName("isFirstCard")))
+    .flatMap(node => Array.from(node.getElementsByClassName("allowTextSelection")))
+    .flatMap(node => Array.from(node.getElementsByTagName("div")))
+    .map(div => div.childNodes[0])
+    .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim().startsWith(cautionText));
+
+  if (!cautionSpans.length && !cautionTextNodes.length && !cautionPreviewNodes.length)
     return;
 
   console.debug("Caution spans", cautionSpans);
   console.debug("Caution text nodes", cautionTextNodes);
+  console.debug("Caution preview nodes", cautionPreviewNodes);
 
   requestAnimationFrame(() => {
     for (const cautionSpan of cautionSpans) {
@@ -99,6 +120,10 @@ function removeCautionBanners(nodes) {
         cautionTextNode.nextElementSibling.remove();
       }
       cautionTextNode.remove();
+    }
+
+    for (const node of cautionPreviewNodes) {
+      node.nodeValue = node.nodeValue.replace(cautionText, "");
     }
   });
 }
