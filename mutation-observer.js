@@ -121,6 +121,10 @@ function unfuckLinks(nodes) {
 
       a.href = unfuckedUrl;
 
+      // plaintext bare URLs turned into links
+      if (a.textContent === fuckedUrl)
+        a.textContent = unfuckedUrl;
+
       console.debug(`Unfucked ${fuckedUrl} → ${unfuckedUrl}`);
     }
   });
