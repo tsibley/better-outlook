@@ -7,6 +7,7 @@ function load() {
         switch (mutation.type) {
           case "childList":
             removeCautionBanners(mutation.addedNodes);
+            unfuckLinks(mutation.addedNodes);
             break;
         }
       }
@@ -100,6 +101,58 @@ function removeCautionBanners(nodes) {
       cautionTextNode.remove();
     }
   });
+}
+
+
+function unfuckLinks(nodes) {
+  const fuckedLinks = Array.from(nodes)
+    .flatMap(node => Array.from(node.getElementsByTagName("a")))
+    .filter(a => a.href?.startsWith("https://urldefense.com/"));
+
+  if (!fuckedLinks.length)
+    return;
+
+  console.debug("Fucked links", fuckedLinks);
+
+  requestAnimationFrame(() => {
+    for (const a of fuckedLinks) {
+      a.href = a.href.replace(/^https:\/\/urldefense[.]com\/v3\/__(.+?)__;.*$/, unfuck);
+    }
+  });
+
+  function unfuck(fuckedUrl, mangledUrl) {
+    const unfuckedUrl = deurchin(urloffense(mangledUrl));
+    console.debug(`Unfucked ${fuckedUrl} → ${unfuckedUrl}`);
+    return unfuckedUrl;
+  }
+
+  /* URL Defense mangled this:
+   *
+   *   https://www.google.com/url?q=https://github.com/nextstrain/ebola/blob/bb9421bacbb2a3ce5db48c22cd716041858c913f/ingest/workflow/snakemake_rules/transform.smk#23L76-L84
+   *
+   * into:
+   *
+   *   https://www.google.com/url?q=https:**Agithub.com*nextstrain*ebola*blob*bb9421bacbb2a3ce5db48c22cd716041858c913f*ingest*workflow*snakemake_rules*transform.smk*23L76-L84
+   *
+   * Ugh my head.  WTF is "**A"??  Do not understand that yet.
+   */
+  function urloffense(mangledUrl) {
+    return mangledUrl
+      .replace(/(?<=http[s]:)[*][*]A/, "//") // Replace "https:**A" with "https://"
+      .replace(/(.*)[*]/, "$1#")             // Replace last "*" with a "#" (terrible heuristic)
+      .replace(/[*]/g, "/")                  // Replace remaining "*" with "/"
+  }
+
+  function deurchin(mangledUrl) {
+    const url = new URL(mangledUrl);
+    const params = new URLSearchParams(
+      Array.from(url.searchParams)
+        .filter(([k, v]) => !k.startsWith("utm_"))
+    );
+
+    url.search = params.toString();
+    return url.toString();
+  }
 }
 
 
