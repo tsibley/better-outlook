@@ -66,6 +66,9 @@ function removeCautionBanners(nodes) {
     .map(div => div.childNodes[0])
     .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim() === cautionText);
 
+  if (!cautionSpans.length && !cautionTextNodes.length)
+    return;
+
   console.debug("Caution spans", cautionSpans);
   console.debug("Caution text nodes", cautionTextNodes);
 
