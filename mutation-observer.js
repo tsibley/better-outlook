@@ -116,15 +116,14 @@ function unfuckLinks(nodes) {
 
   requestAnimationFrame(() => {
     for (const a of fuckedLinks) {
-      a.href = a.href.replace(/^https:\/\/urldefense[.]com\/v3\/__(.+?)__;.*$/, unfuck);
+      const fuckedUrl = a.href;
+      const unfuckedUrl = deurchin(urloffense(fuckedUrl));
+
+      a.href = unfuckedUrl;
+
+      console.debug(`Unfucked ${fuckedUrl} → ${unfuckedUrl}`);
     }
   });
-
-  function unfuck(fuckedUrl, mangledUrl) {
-    const unfuckedUrl = deurchin(urloffense(mangledUrl));
-    console.debug(`Unfucked ${fuckedUrl} → ${unfuckedUrl}`);
-    return unfuckedUrl;
-  }
 
   /* URL Defense mangled this:
    *
@@ -136,15 +135,21 @@ function unfuckLinks(nodes) {
    *
    * Ugh my head.  WTF is "**A"??  Do not understand that yet.
    */
-  function urloffense(mangledUrl) {
-    return mangledUrl
+  function urloffense(url) {
+    const match = url.match(/^https:\/\/urldefense[.]com\/v3\/__(?<mangledUrl>.+?)__;.*$/);
+
+    if (!match?.groups.mangledUrl)
+      return url;
+
+    return match.groups.mangledUrl
       .replace(/(?<=http[s]:)[*][*]A/, "//") // Replace "https:**A" with "https://"
       .replace(/(.*)[*]/, "$1#")             // Replace last "*" with a "#" (terrible heuristic)
       .replace(/[*]/g, "/")                  // Replace remaining "*" with "/"
   }
 
-  function deurchin(mangledUrl) {
-    const url = new URL(mangledUrl);
+  function deurchin(url) {
+    url = new URL(url);
+
     const params = new URLSearchParams(
       Array.from(url.searchParams)
         .filter(([k, v]) => !k.startsWith("utm_"))
