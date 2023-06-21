@@ -150,6 +150,21 @@ function unfuckLinks(nodes) {
       if (a.textContent === fuckedUrl)
         a.textContent = unfuckedUrl;
 
+      /* Prevent Outlook's "SafelinksHandler" from being called on click and
+       * overriding the default behaviour of following the href (which we just
+       * updated).
+       *
+       * The indirection via a.parentElement is necessary because during the
+       * "at target" phase of event handling (between capturing and bubbling),
+       * events are always fired in order of registration.
+       */
+      a.parentElement.addEventListener("click", e => {
+        if (e.target === a) {
+          console.debug(`Stopping immediate propagation of click to Outlook's "SafelinksHandler"`, e);
+          e.stopImmediatePropagation()
+        }
+      }, {capture: true});
+
       console.debug(`Unfucked ${fuckedUrl} → ${unfuckedUrl}`);
     }
   });
