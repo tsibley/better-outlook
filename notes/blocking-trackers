@@ -1,0 +1,30 @@
+Implementing request blocking to intercept tracking URLs and unwrap them.
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/onBeforeRequest
+
+
+example link, with two tracking layers.
+
+    https://scysvr03.r.us-west-2.awstrack.me/L0/https:%2F%2Fsqclick.com%2Foutreach%2Ft%2FrHPzUToxtEDw%2Fhttps%25253A%25252F%25252Fwww.spicewaala.com%25252Fproduct%25252Fspecial-gully-burger%25252F126%25253Futm_source%25253Dsqmktg_email%3Fs=RQFnfpKL_X1W2HaU-wzovEF28QmW_CBp7p6nv_oOnPU/2/010101888a4ac1bf-2b2616c6-fdb1-49a3-a713-35cadcdffd93-000000/eGJiwXtt4iHErzYcS6rGxGYaolQ=325
+
+first unwrap outer layer of awstrack.me
+
+    const url = new URL("https://scysvr03.r.us-west-2.awstrack.me/L0/https:%2F%2Fsqclick.com%2Foutreach%2Ft%2FrHPzUToxtEDw%2Fhttps%25253A%25252F%25252Fwww.spicewaala.com%25252Fproduct%25252Fspecial-gully-burger%25252F126%25253Futm_source%25253Dsqmktg_email%3Fs=RQFnfpKL_X1W2HaU-wzovEF28QmW_CBp7p6nv_oOnPU/2/010101888a4ac1bf-2b2616c6-fdb1-49a3-a713-35cadcdffd93-000000/eGJiwXtt4iHErzYcS6rGxGYaolQ=325");
+    
+    console.log(url.pathname.split("/").map(decodeURIComponent).find(x => x.match(/^(http[s]|ftp):\/\//)));
+
+to get
+
+    https://sqclick.com/outreach/t/rHPzUToxtEDw/https%253A%252F%252Fwww.spicewaala.com%252Fproduct%252Fspecial-gully-burger%252F126%253Futm_source%253Dsqmktg_email?s=RQFnfpKL_X1W2HaU-wzovEF28QmW_CBp7p6nv_oOnPU
+
+then unwrap the inner layer of sqclick.com
+
+    const url = new URL("https://sqclick.com/outreach/t/rHPzUToxtEDw/https%253A%252F%252Fwww.spicewaala.com%252Fproduct%252Fspecial-gully-burger%252F126%253Futm_source%253Dsqmktg_email?s=RQFnfpKL_X1W2HaU-wzovEF28QmW_CBp7p6nv_oOnPU");
+
+    console.log(url.pathname.split("/").map(decodeURIComponent).map(decodeURIComponent).find(x => x.match(/^(http[s]|ftp):\/\//)));
+
+to get
+
+    https://www.spicewaala.com/product/special-gully-burger/126?utm_source=sqmktg_email
+
+and then deurchin as normal from there.
