@@ -81,7 +81,6 @@ function removeCautionBanners(nodes) {
     .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim() === cautionText);
 
   const cautionPreviewNodes = Array.from(nodes)
-    .flatMap(node => Array.from(node.getElementsByClassName("isFirstCard")))
     .flatMap(node => Array.from(node.getElementsByClassName("allowTextSelection")))
     .flatMap(node => Array.from(node.getElementsByTagName("div")))
     .map(div => div.childNodes[0])
