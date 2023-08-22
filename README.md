@@ -6,7 +6,7 @@ A Firefox extension with a content script to intercept and modify the Outlook
 web app's DOM on-the-fly.
 
 - Removes phishing "CAUTION" banners
-- To come: integrate my existing [unsafelinks](https://github.com/tsibley/unsafelinks) hack
+- Unfucks links
 
 
 
