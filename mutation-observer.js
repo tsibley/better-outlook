@@ -115,6 +115,8 @@ function removeCautionBanners(nodes) {
     }
 
     for (const cautionTextNode of cautionTextNodes) {
+      // XXX FIXME: This walks too far since it skips over text node siblings
+      // and ends up removing all <br> sibling elements.
       while (cautionTextNode.nextElementSibling?.tagName === "BR") {
         cautionTextNode.nextElementSibling.remove();
       }
