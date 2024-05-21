@@ -71,16 +71,19 @@ function removeCautionBanners(nodes) {
   const cautionText = "CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.";
 
   const cautionSpans = Array.from(nodes)
+    .filter(node => node.getElementsByTagName)
     .flatMap(node => Array.from(node.getElementsByTagName("span")))
     .filter(span => span.attributes.style?.value.startsWith("color:#9C6500")
                  && span.textContent === "CAUTION:");
 
   const cautionTextNodes = Array.from(nodes)
+    .filter(node => node.getElementsByClassName)
     .flatMap(node => Array.from(node.getElementsByClassName("PlainText")))
     .map(div => div.childNodes[0])
     .filter(node => node?.nodeName === "#text" && node?.nodeValue?.trim() === cautionText);
 
   const cautionPreviewNodes = Array.from(nodes)
+    .filter(node => node.getElementsByClassName)
     .flatMap(node => Array.from(node.getElementsByClassName("allowTextSelection")))
     .flatMap(node => Array.from(node.getElementsByTagName("div")))
     .map(div => div.childNodes[0])
@@ -132,6 +135,7 @@ function removeCautionBanners(nodes) {
 
 function unfuckLinks(nodes) {
   const fuckedLinks = Array.from(nodes)
+    .filter(node => node.getElementsByTagName)
     .flatMap(node => Array.from(node.getElementsByTagName("a")))
     .filter(a => a.href?.startsWith("https://urldefense.com/"));
 
