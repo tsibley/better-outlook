@@ -190,10 +190,6 @@ function unfuckLinks(nodes) {
     if (!match?.groups.mangledUrl)
       return url;
 
-    // Unmangled!  W(hen)TF did they start doing that?
-    if (match.groups.mangledUrl.match(/^http[s]:/))
-      return match.groups.mangledUrl;
-
     return match.groups.mangledUrl
       .replace(/(?<=http[s]:)[*][*]A/, "//") // Replace "https:**A" with "https://"
       .replace(/(.*)[*]/, "$1#")             // Replace last "*" with a "#" (terrible heuristic)
