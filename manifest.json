@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Tom's Outlook Web Access",
-  "version": "5",
+  "version": "6",
   "browser_specific_settings": {
     "gecko": {
       "id": "{96318ec8-4b52-4cc8-9ff1-0224a896a416}"
