@@ -151,6 +151,9 @@ function unfuckLinks(nodes) {
 
       a.href = unfuckedUrl;
 
+      if (a.title === fuckedUrl)
+        a.title = unfuckedUrl;
+
       // plaintext bare URLs turned into links
       if (a.textContent === fuckedUrl)
         a.textContent = unfuckedUrl;
