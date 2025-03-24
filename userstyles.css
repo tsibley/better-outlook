@@ -1,0 +1,29 @@
+/*
+ * User styles for use with Stylus
+ */
+
+#LeftRail {
+    display: none
+}
+
+#LeftRail + div {
+    width: 100vw;
+}
+
+#O365_NavHeader, [role=banner] {
+    width: 100vw;
+}
+
+@media (max-width: 1000px) {
+    [aria-label=Ribbon] {
+        display: none;
+    }
+
+    #o365header {
+        /* display: none; */
+    }
+    
+    #headerButtonsRegionId {
+        display: none;
+    }
+}
