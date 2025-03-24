@@ -27,3 +27,9 @@
         display: none;
     }
 }
+
+#ConversationReadingPaneContainer [data-app-section=ConversationContainer]:has([role=heading]) > div {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
