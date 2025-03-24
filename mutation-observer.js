@@ -70,6 +70,12 @@ function removeCautionBanners(nodes) {
   */
   const cautionText = "CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you recognize the sender and know the content is safe.";
 
+  // XXX FIXME: these are the wrong way round and doing a bunch of duplicative
+  // work.  Instead of starting from *nodes* and walking down the tree to find
+  // elements of interest, it should be identifying which *nodes* are
+  // themselves the elements of interest based on DOM position, attributes,
+  // etc.  That's because it gets called for *every* added node, not just added
+  // subtrees.
   const cautionSpans = Array.from(nodes)
     .filter(node => node.getElementsByTagName)
     .flatMap(node => Array.from(node.getElementsByTagName("span")))
